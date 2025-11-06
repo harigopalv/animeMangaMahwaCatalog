@@ -19,6 +19,7 @@ export default function ContentListDisplay() {
       const finalData = snapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .sort((a, b) => a.contentName.localeCompare(b.contentName));
+      console.log(finalData);
       setContentData(finalData);
     };
 
@@ -76,72 +77,79 @@ export default function ContentListDisplay() {
 
   return (
     <>
-      <div className="content-list-container">
-        <div className="content-list-header">
-          <input
-            type="text"
-            placeholder="Search content..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-          <button onClick={handleInsertPopup}>Insert</button>
-        </div>
-
-        <table className="content-list-table">
-          <thead>
-            <tr>
-              <th>Content Name</th>
-              <th>Content Type</th>
-              <th>Current Chapter</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filterData.map((data) => (
-              <tr key={data.id}>
-                <td>{data.contentName}</td>
-                <td>{data.contentType}</td>
-                <td>{data.chapterNo}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="content-list-footer">
-          <div className="pagination-controls">
-            <select
-              value={currentFilter}
-              onChange={(e) => setCurrentFilter(Number(e.target.value))}
-            >
-              {filterList.map((filter) => (
-                <option key={filter} value={filter}>
-                  {filter}
-                </option>
-              ))}
-            </select>
-
-            <button
-              disabled={currentPage === 0}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-            >
-              Prev
-            </button>
-
-            <span>{currentPage + 1}</span>
-
-            <button
-              disabled={(currentPage + 1) * currentFilter >= contentData.length}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-            >
-              Next
-            </button>
+      {contentData ? (
+        <div className="content-list-container">
+          <div className="content-list-header">
+            <input
+              type="text"
+              placeholder="Search content..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+            <button onClick={handleInsertPopup}>Insert</button>
           </div>
 
-          <p>
-            Showing {startingIndex + 1} -{" "}
-            {Math.min(endingIndex, contentData.length)} of {contentData.length}
-          </p>
+          <table className="content-list-table">
+            <thead>
+              <tr>
+                <th>Content Name</th>
+                <th>Content Type</th>
+                <th>Current Chapter</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filterData.map((data) => (
+                <tr key={data.id}>
+                  <td>{data.contentName}</td>
+                  <td>{data.contentType}</td>
+                  <td>{data.chapterNo}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="content-list-footer">
+            <div className="pagination-controls">
+              <select
+                value={currentFilter}
+                onChange={(e) => setCurrentFilter(Number(e.target.value))}
+              >
+                {filterList.map((filter) => (
+                  <option key={filter} value={filter}>
+                    {filter}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                disabled={currentPage === 0}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+              >
+                Prev
+              </button>
+
+              <span>{currentPage + 1}</span>
+
+              <button
+                disabled={
+                  (currentPage + 1) * currentFilter >= contentData.length
+                }
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+              >
+                Next
+              </button>
+            </div>
+
+            <p>
+              Showing {startingIndex + 1} -{" "}
+              {Math.min(endingIndex, contentData.length)} of{" "}
+              {contentData.length}
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <h4>Loading...</h4>
+      )}
 
       {insertPopup && (
         <ContentAdditionForm
