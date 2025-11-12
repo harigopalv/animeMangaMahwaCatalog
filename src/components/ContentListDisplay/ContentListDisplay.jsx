@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { collection, getDocs, addDoc } from "firebase/firestore";
+import { logoutAdmin } from "../../loginAdmin";
 import "./ContentListDisplay.css";
 import ContentAdditionForm from "../ContentAdditionForm/ContentAdditionForm";
+import LoginComponent from "../LoginComponent/LoginComponent";
 
 export default function ContentListDisplay() {
   const [contentData, setContentData] = useState([]);
@@ -10,6 +12,8 @@ export default function ContentListDisplay() {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [insertPopup, setInsertPopup] = useState(false);
+  const [loginPopup, setLoginPopup] = useState(false);
+  const [loggedInfo, setLoggedInfo] = useState("");
   const filterList = [10, 15, 25];
 
   useEffect(() => {
@@ -19,7 +23,6 @@ export default function ContentListDisplay() {
       const finalData = snapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .sort((a, b) => a.contentName.localeCompare(b.contentName));
-      console.log(finalData);
       setContentData(finalData);
     };
 
@@ -69,8 +72,30 @@ export default function ContentListDisplay() {
     return updatedContentData.slice(startingIndex, endingIndex);
   };
 
-  const handleInsertPopup = (e) => {
+  const handleInsertPopup = (_e) => {
     setInsertPopup((prev) => !prev);
+  };
+
+  const handleLoginPopup = (_e) => {
+    setLoginPopup((prev) => !prev);
+  };
+
+  const handleLoggedOut = (_e) => {
+    logoutAdmin();
+    setLoggedInfo("");
+  };
+
+  const handleLogIn = (user) => {
+    handleLoginPopup();
+    setLoggedInfo(user);
+  };
+
+  const handleUserAccess = () => {
+    if (loggedInfo !== "") {
+      handleLoggedOut();
+    } else {
+      handleLoginPopup();
+    }
   };
 
   const filterData = requestFilterData();
@@ -86,7 +111,15 @@ export default function ContentListDisplay() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
-            <button onClick={handleInsertPopup}>Insert</button>
+            <button onClick={handleUserAccess}>
+              {loggedInfo ? "Logout" : "Login"}
+            </button>
+            <button
+              disabled={loggedInfo ? false : true}
+              onClick={handleInsertPopup}
+            >
+              Insert
+            </button>
           </div>
 
           <table className="content-list-table">
@@ -155,6 +188,12 @@ export default function ContentListDisplay() {
         <ContentAdditionForm
           onClose={handleInsertPopup}
           onSubmit={handleSubmit}
+        />
+      )}
+      {loginPopup && (
+        <LoginComponent
+          onClose={handleLoginPopup}
+          setLoggedInfo={handleLogIn}
         />
       )}
     </>
