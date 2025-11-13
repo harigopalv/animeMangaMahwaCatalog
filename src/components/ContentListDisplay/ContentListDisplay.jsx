@@ -40,7 +40,6 @@ export default function ContentListDisplay() {
     }
 
     try {
-      // Push new document to Firestore
       await addDoc(collection(db, "content"), {
         contentName: contentInfo.contentName,
         chapterNo: contentInfo.chapterNo,

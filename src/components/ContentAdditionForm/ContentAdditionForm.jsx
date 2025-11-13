@@ -6,7 +6,7 @@ export default function ContentAdditionForm({ onClose, onSubmit }) {
   const [contentInfo, setContentInfo] = useState({
     contentName: "",
     chapterNo: "",
-    category: "",
+    contentType: "",
   });
 
   const handleContentUpdate = (e) => {
@@ -22,7 +22,7 @@ export default function ContentAdditionForm({ onClose, onSubmit }) {
     setContentInfo({
       contentName: "",
       chapterNo: "",
-      category: "",
+      contentType: "",
     });
   };
 
@@ -57,10 +57,10 @@ export default function ContentAdditionForm({ onClose, onSubmit }) {
         />
         <input
           type="text"
-          name="category"
-          value={contentInfo.category}
+          name="contentType"
+          value={contentInfo.contentType}
           onChange={handleContentUpdate}
-          placeholder="Enter Category"
+          placeholder="Enter contentType"
         />
 
         <button type="submit">Save</button>
