@@ -33,7 +33,7 @@ export default function ContentListDisplay() {
     if (
       !contentInfo.contentName ||
       !contentInfo.chapterNo ||
-      !contentInfo.category
+      !contentInfo.contentType
     ) {
       alert("Please fill all fields");
       return;
@@ -43,7 +43,7 @@ export default function ContentListDisplay() {
       await addDoc(collection(db, "content"), {
         contentName: contentInfo.contentName,
         chapterNo: contentInfo.chapterNo,
-        category: contentInfo.category,
+        contentType: contentInfo.contentType,
         // createdAt: new Date(), // optional: for sorting later
       });
 
